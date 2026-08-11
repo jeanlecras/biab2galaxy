@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "biab2galaxy"
+version = "0.0.1"
+authors = [
+  { name="Jean Le Cras", email="jean.le-cras@proton.me" },
+]
+description = "A tool to convert Bon in a Box tools into Galaxy tools"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "PyYAML>=6.0.3",
+    "lxml>=6.1.1",
+    "duckdb>=1.5.4",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Build Tools",
+]
+keywords = ["converter", "Galaxy", "BiaB", "workflow", "pipeline", "wrapper", "parsing", "earth science"]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+
+[project.scripts]
+biab2galaxy = "biab2galaxy.biab_to_galaxy:main"
+
+[project.urls]
+Homepage = "https://github.com/jeanlecras/biab2galaxy"
+Issues = "https://github.com/jeanlecras/biab2galaxy/issues"
