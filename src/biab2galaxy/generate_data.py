@@ -1,31 +1,3 @@
-"""
-galaxy.web.framework.decorators ERROR 2026-06-16 14:33:37,406 [pN:main.1,p:11740,tN:WSGI_1] Uncaught exception in exposed API method:
-Traceback (most recent call last):
-  File "/home/pndb-cr/galaxy/lib/galaxy/web/framework/decorators.py", line 340, in decorator
-    rval = func(self, trans, *args, **kwargs)
-  File "/home/pndb-cr/galaxy/lib/galaxy/webapps/galaxy/api/tools.py", line 558, in build
-    return tool.to_json(trans, kwd.get("inputs", kwd), history=history)
-  File "/home/pndb-cr/galaxy/lib/galaxy/tools/__init__.py", line 3123, in to_json
-    populate_state(request_context, self.inputs, params.__dict__, state_inputs, state_errors)
-  File "/home/pndb-cr/galaxy/lib/galaxy/tools/parameters/__init__.py", line 444, in populate_state
-    _populate_state_legacy(
-  File "/home/pndb-cr/galaxy/lib/galaxy/tools/parameters/__init__.py", line 575, in _populate_state_legacy
-    state[input.name] = input.get_initial_value(request_context, context)
-  File "/home/pndb-cr/galaxy/lib/galaxy/tools/parameters/grouping.py", line 820, in get_initial_value
-    rval[child_input.name] = child_input.get_initial_value(trans, child_context)
-  File "/home/pndb-cr/galaxy/lib/galaxy/tools/parameters/basic.py", line 1156, in get_initial_value
-    options = cast(list[ParameterOption], self.get_options(trans, other_values))
-  File "/home/pndb-cr/galaxy/lib/galaxy/tools/parameters/basic.py", line 1002, in get_options
-    return self.options.get_options(trans, other_values)
-  File "/home/pndb-cr/galaxy/lib/galaxy/tools/parameters/dynamic_options.py", line 987, in get_options
-    options = self.get_fields(trans, other_values)
-  File "/home/pndb-cr/galaxy/lib/galaxy/tools/parameters/dynamic_options.py", line 840, in get_fields
-    options = filter.filter_options(options, trans, other_values)
-  File "/home/pndb-cr/galaxy/lib/galaxy/tools/parameters/dynamic_options.py", line 324, in filter_options
-    if self.keep == (fields[self.column] in ref_values):
-IndexError: list index out of range
-"""
-
 import duckdb
 from pathlib import Path
 import xml.etree.ElementTree as ET

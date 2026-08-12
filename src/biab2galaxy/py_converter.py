@@ -1,6 +1,6 @@
-import ast
-import os
+# Made using Claude.ai
 
+import ast
 
 class BiabFunctionReplacer(ast.NodeTransformer):
     """

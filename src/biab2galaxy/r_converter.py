@@ -1,3 +1,5 @@
+# Made using Claude.ai
+
 import re
 import os
 
@@ -83,15 +85,6 @@ def capture_packages_install(script_path, tool_folder):
     """
     pass
 
-# TODO
-# Cette fonction doit prendre en argument la liste des paramètres (des noms de paramtres qui se trouvent dans input.json) étant de type spécial
-# 
-# et si c'était biab_utils.py qui se chergait de mettre les données de types biab là oèu il faut dans input.json, 
-# il devra prendre en paramètre la liste des des noms de paramètres spéciaux, ces paramaètre feront partie de la commande cheetah qui execute ce script
-# il n'y aurait plus besoin de changer add_inputs_handling mais changer la construction de la commande cheetah et les arguments du script biab_utils
-# biab_utils a déjà les informations qui lui faut en argument pour savoir quel paramètre est spécial
-# TODO
-# changer la fonction principale de biab_utils pour ouvrir les form.json et mettre leur données là o`u il faut
 
 def add_inputs_handling(script_path):
     """
