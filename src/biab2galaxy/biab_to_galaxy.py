@@ -6,7 +6,21 @@ import os
 import shutil
 from lxml import etree as ET
 from argparse import ArgumentParser
-from generate_data import generate_data, declare_tables
+from platformdirs import user_config_dir
+from importlib.resources import files
+from .generate_data import generate_data, declare_tables
+
+
+def get_user_data_path():
+    config_dir = Path(user_config_dir("biab2galaxy"))
+    config_dir.mkdir(parents=True, exist_ok=True)
+    user_file = config_dir / "type_to_extension.json"
+
+    if not user_file.exists():
+        default_file = files("biab2galaxy").joinpath("type_to_extension.json")
+        shutil.copy(default_file, user_file)
+
+    return user_file
 
 def main():
     parser = ArgumentParser(
@@ -87,11 +101,11 @@ def main():
     
     match script_ext:
         case "py":
-            import py_converter as script_processor
+            from . import py_converter as script_processor
         case "r":
-            import r_converter as script_processor
+            from . import r_converter as script_processor
         case "jl":
-            import jl_converter as script_processor
+            from . import jl_converter as script_processor
     
     #################
     # LOADING files #
@@ -108,7 +122,8 @@ def main():
             
     # opens a dictionnary mapping MIME types to file extensions.
     # Biab uses MIME types to describe files, Galaxy uses extension (format="...")
-    with open("type_to_extension.json", "r") as file:
+    user_data_path = get_user_data_path()
+    with open(user_data_path, "r") as file:
         file_str = file.read()
         TYPE_TO_EXTENSION = json.loads(file_str)
     
