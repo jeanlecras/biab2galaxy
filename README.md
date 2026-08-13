@@ -19,12 +19,10 @@
 
 - local Galaxy instance (highly recommended)
 - python 3.12+
-- duckdb
-- PyYAML
 
-Instal dependencies:
+Installation:
 ```
-pip install duckdb pyyaml
+pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ biab2galaxy
 ```
 
 ## Usage
