@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/biab2galaxy_jeanlecras
+      url: https://pypi.org/p/biab2galaxy
     permissions:
       id-token: write  # obligatoire pour le Trusted Publishing (OIDC)
 
