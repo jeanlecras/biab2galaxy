@@ -3,7 +3,6 @@ name: Publish to PyPI
 on:
   release:
     types: [published]
-  # Permet aussi de déclencher le workflow manuellement depuis l'onglet Actions de GitHub
   workflow_dispatch:
 
 jobs:
@@ -31,12 +30,12 @@ jobs:
           path: dist/
 
   publish:
-    name: Publish to PyPI
+    name: Publish to TestPyPI
     needs: build
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/biab2galaxy
+      url: https://test.pypi.org/p/biab2galaxy
     permissions:
       id-token: write  # obligatoire pour le Trusted Publishing (OIDC)
 
@@ -47,5 +46,7 @@ jobs:
           name: python-package-distributions
           path: dist/
 
-      - name: Publish to PyPI
+      - name: Publish to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
