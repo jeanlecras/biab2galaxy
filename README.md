@@ -22,7 +22,7 @@
 
 Installation:
 ```
-pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ biab2galaxy
+pip install biab2galaxy
 ```
 
 ## Usage

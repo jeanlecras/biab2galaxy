@@ -30,14 +30,14 @@ jobs:
           path: dist/
 
   publish:
-    name: Publish to TestPyPI
+    name: Publish to PyPI
     needs: build
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://test.pypi.org/p/biab2galaxy
+      url: https://pypi.org/p/biab2galaxy
     permissions:
-      id-token: write  # obligatoire pour le Trusted Publishing (OIDC)
+      id-token: write
 
     steps:
       - name: Download distribution artifacts
@@ -46,7 +46,5 @@ jobs:
           name: python-package-distributions
           path: dist/
 
-      - name: Publish to TestPyPI
+      - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/

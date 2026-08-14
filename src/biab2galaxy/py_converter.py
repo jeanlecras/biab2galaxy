@@ -392,39 +392,34 @@ def replace_biab_functions(script_path):
         f.write(new_code)
 
 
-def add_inputs_handling(script_path, input_names):
+def add_inputs_handling(script_path):
     """
-    Modifie a Python script to handle inputs via sys.argv and a JSON file.
-    Support nested structures (e.g., bboxCRS.CRSBboxWGS84.xmin).
-    Add output_folder at the beginning of the script and handles output.json at the end.
-    
-    Args:
-        script_path: Path to the Python script to be modified
-        input_names: List of input names to handle (may contain periods)
+    - Replaces  var = biab_inputs()  with a read from input.json
+      (the file must already exist before the script is executed).
+    - Prepends output_folder = os.getcwd() (and the required imports) to the script.
     """
     with open(script_path, 'r', encoding='utf-8') as f:
         source_code = f.read()
-    
-    # Replace sys.argv[1] by "."
+
+    # sys.argv[1] -> "."
     source_code = source_code.replace('sys.argv[1]', '"."')
-    
+
     tree = ast.parse(source_code)
-    
-    # replace biab_inputs()
+
+    # var = biab_inputs() -> var = json.load(open("input.json"))
     replacer = BiabInputsReplacer()
     new_tree = replacer.visit(tree)
-    
-    # Add the imports at the very beginning (without verification)
+
+    # add the necessary imports at the head of the script
     imports_to_add = [
         ast.Import(names=[ast.alias(name='json', asname=None)]),
         ast.Import(names=[ast.alias(name='sys', asname=None)]),
         ast.Import(names=[ast.alias(name='os', asname=None)])
     ]
-    
     for imp in reversed(imports_to_add):
         new_tree.body.insert(0, imp)
-    
-    # Add output_folder = os.getcwd() after the imports
+
+    # output_folder = os.getcwd() juste après les imports
     output_folder_assign = ast.Assign(
         targets=[ast.Name(id='output_folder', ctx=ast.Store())],
         value=ast.Call(
@@ -438,59 +433,13 @@ def add_inputs_handling(script_path, input_names):
         )
     )
     new_tree.body.insert(len(imports_to_add), output_folder_assign)
-    
-    # Build inputs_dict
-    if input_names:
-        nested_dict = build_nested_dict(input_names)
-        
-        inputs_dict_assign = ast.Assign(
-            targets=[ast.Name(id='inputs_dict', ctx=ast.Store())],
-            value=dict_to_ast(nested_dict)
-        )
-        new_tree.body.insert(len(imports_to_add) + 1, inputs_dict_assign)
-        
-        # Create input.json
-        write_json = ast.With(
-            items=[
-                ast.withitem(
-                    context_expr=ast.Call(
-                        func=ast.Name(id='open', ctx=ast.Load()),
-                        args=[
-                            ast.Constant(value='input.json'),
-                            ast.Constant(value='w')
-                        ],
-                        keywords=[]
-                    ),
-                    optional_vars=ast.Name(id='f', ctx=ast.Store())
-                )
-            ],
-            body=[
-                ast.Expr(
-                    value=ast.Call(
-                        func=ast.Attribute(
-                            value=ast.Name(id='json', ctx=ast.Load()),
-                            attr='dump',
-                            ctx=ast.Load()
-                        ),
-                        args=[
-                            ast.Name(id='inputs_dict', ctx=ast.Load()),
-                            ast.Name(id='f', ctx=ast.Load())
-                        ],
-                        keywords=[
-                            ast.keyword(arg='indent', value=ast.Constant(value=2))
-                        ]
-                    )
-                )
-            ]
-        )
-        new_tree.body.insert(len(imports_to_add) + 2, write_json)
-    
+
     ast.fix_missing_locations(new_tree)
     new_code = ast.unparse(new_tree)
-    
+
     with open(script_path, 'w', encoding='utf-8') as f:
         f.write(new_code)
-
+        
 
 def add_outputs_handling(script_path, replacements):
     """
