@@ -10,6 +10,64 @@ from platformdirs import user_config_dir
 from importlib.resources import files
 from .generate_data import generate_data, declare_tables
 
+PYTHON_DEFUALT_DEPENDENCIES = {
+    "pystac"
+    }
+
+R_DEFAULT_DEPENDENCIES = {
+    "conda-build",
+    "proj",
+    "libgdal",
+    "r-abind",
+    "r-base",
+    "r-curl",
+    "r-devtools",
+    "r-dismo",
+    "r-downloader",
+    "r-dplyr",
+    "r-enmeval",
+    "r-essentials",
+    "r-gdalcubes",
+    "r-gdalutilities",
+    "r-gdalutils",
+    "r-geojsonsf",
+    "r-ggsci",
+    "r-jpeg",
+    "r-landscapemetrics",
+    "r-magrittr",
+    "r-png",
+    "r-proj",
+    "r-purrr",
+    "r-rcurl",
+    "r-remotes",
+    "r-rgbif",
+    "r-rjava",
+    "r-rjson",
+    "r-rnaturalearth",
+    "r-rnaturalearthdata",
+    "r-rredlist",
+    "r-rstac",
+    "r-sf",
+    "r-stars",
+    "r-stringr",
+    "r-stringr",
+    "r-terra",
+    "r-this.path",
+    "r-tidyselect",
+    "r-tidyverse",
+    "r-stringr",
+    "r-proj",
+    "duckdb"
+    }
+
+JULIA_DEFAULT_DEPENDENCIES = {
+    }
+
+EXT_2_DEPENDENCIES = {
+    "jl": JULIA_DEFAULT_DEPENDENCIES,
+    "r": R_DEFAULT_DEPENDENCIES,
+    "py": PYTHON_DEFUALT_DEPENDENCIES
+    }
 
 def get_user_data_path():
     config_dir = Path(user_config_dir("biab2galaxy"))
@@ -131,19 +189,29 @@ def main():
     # BUILDING DOT_SHED FILE #
     ##########################
     
-    dot_shed = {
-        "name": yaml_data['name'],
-        "owner": yaml_data['author'][0]['name'],
-        "description": yaml_data['description'],
-        "homepage_url": yaml_data['author'][0]['identifier'],
-        "long_description": yaml_data['description'],
-        "type": "unrestricted",
-        "categories": [],
-        "auto_tool_repositories": [{
+    dot_shed = {}
+    
+    if 'name' in yaml_data:
+        dot_shed["name"] = yaml_data['name']
+    
+    if yaml_data.get('author') and len(yaml_data['author']) > 0:
+        if 'name' in yaml_data['author'][0]:
+            dot_shed["owner"] = yaml_data['author'][0]['name']
+        if 'identifier' in yaml_data['author'][0]:
+            dot_shed["homepage_url"] = yaml_data['author'][0]['identifier']
+    
+    if 'description' in yaml_data:
+        dot_shed["description"] = yaml_data['description']
+        dot_shed["long_description"] = yaml_data['description']
+    
+    dot_shed["type"] = "unrestricted"
+    dot_shed["categories"] = []
+    
+    if 'name' in yaml_data:
+        dot_shed["auto_tool_repositories"] = [{
             "name_template": "{{ tool_id }}",
-            "description_template": yaml_data['name']+": {{ tool_id }}"
-            }]
-        }
+            "description_template": yaml_data['name'] + ": {{ tool_id }}"
+        }]
     
     print("writing .shed.yml file")
     with open(shed_path, "w") as file:
