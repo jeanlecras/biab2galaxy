@@ -39,7 +39,7 @@ Creates a Galaxy wrapper.xml file based on the Biab wrapper.yml file.
 Creates a Galaxy script file based on the biab script file.
 
 ```
-python biab_to_galaxy.py biab_wrapper biab_script galaxy_wrapper galaxy_script
+biab2galaxy biab_wrapper biab_script galaxy_wrapper galaxy_script
 ```
 
 ### 2. Port a tool into galaxy
@@ -47,8 +47,14 @@ python biab_to_galaxy.py biab_wrapper biab_script galaxy_wrapper galaxy_script
 Converts a tool. Move the generated files to the galaxy repository. Add the tool to the galaxy tool list. Creates a .shed.yml file and generates the necessary data tables if they don't exist yet.
 
 ```
-python biab_to_galaxy.py biab_wrapper biab_script galaxy_wrapper galaxy_script -g galaxy_repository
+biab2galaxy biab_wrapper biab_script galaxy_wrapper galaxy_script -g galaxy_repository
 ```
+
+## Recommendations
+
+Check the [drafts of converted tools](https://github.com/jeanlecras/biab-tools-converted-to-galaxy), you might find what you are looking for, if not you can contribute to it.
+
+Review the file at ```~/.config/biab2galaxy/type_to_extension.json``` to set which file extension corresponds to each MIME type.
 
 ## What this converter can't do
 - Generate tests for the converted tools
