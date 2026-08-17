@@ -1,6 +1,6 @@
 # Bon in a box to Galaxy tool converter
 
-[Bon in a box](https://boninabox.geobon.org/) and [Galaxy](https://usegalaxy.org/) are two platforms for building and sharing scientific workflows. This tool helps developers migrate Biab tools to Galaxy by automating part of the process.
+[Bon in a box](https://boninabox.geobon.org/) and [Galaxy](https://usegalaxy.org/) are two platforms for building and sharing scientific workflows. This tool helps developers migrate Biab tools to Galaxy by automating part of the process. This tool doesn't handle every scenario, manual intervention is needed to get a functionning tool.
 
 ## Features
 - Generation of Galaxy wrapper file based on Biab wrapper file
@@ -15,7 +15,7 @@
 - Adding a converted tool to the Galaxy's list of tools
 - Generation of a .shed.yml file
 
-## requirements
+## Requirements
 
 - local Galaxy instance (highly recommended)
 - python 3.12+
@@ -27,27 +27,53 @@ pip install biab2galaxy
 
 ## Usage
 
-**Arguments**:
-- yml file for the Biab tool wrapper
-- R/python/julia file for the Biab tool script
-- xml file for Galaxy tool wrapper to be created
-- R/python/julia file for the Galaxy tool script to be created
-- `-g` : path to the local Galaxy instance (optional)
-
-### 1. Convert a tool
-Creates a Galaxy wrapper.xml file based on the Biab wrapper.yml file.
-Creates a Galaxy script file based on the biab script file.
-
 ```
-biab2galaxy biab_wrapper biab_script galaxy_wrapper galaxy_script
+biab2galaxy [OPTIONS]
 ```
-
-### 2. Port a tool into galaxy
-
-Converts a tool. Move the generated files to the galaxy repository. Add the tool to the galaxy tool list. Creates a .shed.yml file and generates the necessary data tables if they don't exist yet.
-
+ 
+### Options
+ 
+| Flag | Description |
+|---|---|
+| `-bw`, `--biab_wrapper` | Path of the BiaB tool's wrapper file (`.yml`) to be converted. |
+| `-bs`, `--biab_script` | Path of the BiaB tool's script file to be converted. |
+| `-gw`, `--galaxy_wrapper` | Path where the generated Galaxy wrapper file (`.xml`) should be saved. |
+| `-gs`, `--galaxy_script` | Path where the generated Galaxy script file should be saved. |
+| `-s`, `--shed` | Path where the `.shed.yml` file should be saved. |
+| `-g`, `--galaxy` [`PATH`] | Path to a Galaxy instance. Applies the necessary changes to that instance to use the generated tool (adds it to `tool_conf.xml` and generates a `.shed.yml`). If used without a value, the Galaxy instance path is guessed automatically. |
+ 
+Supported script languages: **Python** (`.py`), **R** (`.R`).
+ 
+### Requirements
+ 
+- `--biab_wrapper` is required to generate the Galaxy wrapper (`--galaxy_wrapper`) or the `.shed.yml` file (`--shed`).
+- `--biab_script` is required to generate the Galaxy script (`--galaxy_script`).
+- `--biab_wrapper` and `--biab_script` are both required to use `--galaxy`.
+### Examples
+ 
+Convert a BiaB wrapper to a Galaxy wrapper:
+```bash
+biab2galaxy -bw tool.yml -bs tool.py -gw tool.xml
 ```
-biab2galaxy biab_wrapper biab_script galaxy_wrapper galaxy_script -g galaxy_repository
+ 
+Convert both the wrapper and the script:
+```bash
+biab2galaxy -bw tool.yml -bs tool.py -gw tool.xml -gs tool.py
+```
+ 
+Generate a `.shed.yml` file alongside the wrapper:
+```bash
+biab2galaxy -bw tool.yml -bs tool.py -gw tool.xml -gs tool.py -s .shed.yml
+```
+ 
+Convert a tool and deploy it directly into a Galaxy instance:
+```bash
+biab2galaxy -bw tool.yml -bs tool.py -gw tool.xml -gs tool.py -g /path/to/galaxy
+```
+ 
+Same as above, but let the tool guess the Galaxy instance path from `--galaxy_script`:
+```bash
+biab2galaxy -bw tool.yml -bs tool.py -gw tool.xml -gs tool.py -g
 ```
 
 ## Recommendations
