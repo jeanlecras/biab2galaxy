@@ -111,7 +111,6 @@ def get_yaml_data(galaxy_wrapper_path: Path, biab_wrapper_path: Path = None) -> 
     -------
     yaml_data : dict | None
         data of the biab wrapper or None if no biab wrapper is provided.
-
     """
     if biab_wrapper_path is None:
         return None
@@ -156,7 +155,10 @@ def generate_dot_shed(shed_path: Path, yaml_data: dict):
         dot_shed["description"] = yaml_data['description']
         dot_shed["long_description"] = yaml_data['description']
     
-    dot_shed["type"] = "unrestricted"
+    if 'license' in yaml_data:
+        dot_shed["type"] = yaml_data["license"]
+        
+    dot_shed["remote_repository_url"] = "https://github.com/GEO-BON/bon-in-a-box-pipelines/tree/main/scripts"
     dot_shed["categories"] = []
     
     if 'name' in yaml_data:
@@ -301,7 +303,6 @@ def get_extension(yaml_type: str) -> str:
     -------
     str
         file extension (without the ".").
-
     """
     base_type = yaml_type
     if yaml_type.endswith("[]"):
