@@ -1,3 +1,4 @@
+import sys
 import yaml
 from pathlib import Path
 from warnings import warn
@@ -616,8 +617,12 @@ def main():
             print(f"guessing the path of the Galaxy instance is {reference_path.parent.parent.parent}")
         generate_data_tables(galaxy_path)
         add_tool_to_tool_conf(galaxy_path, galaxy_wrapper_path, galaxy_script_path)
-        generate_dot_shed(Path(galaxy_script_path).parent.absolute() / ".shed.yml", yaml_data)
-        
+        generate_dot_shed(Path(galaxy_script_path).parent.absolute() / ".shed.yml", yaml_data)        
+    
+    if all(value is None for value in (args.biab_wrapper, args.biab_script, args.galaxy_wrapper, args.galaxy_script, args.shed, args.galaxy)):
+        parser.print_help(sys.stderr)
+        sys.exit(1)
+    
     print("Conversion complete")
         
     
