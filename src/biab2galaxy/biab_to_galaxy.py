@@ -158,6 +158,8 @@ def generate_dot_shed(shed_path: Path, yaml_data: dict):
     
     if 'license' in yaml_data:
         dot_shed["type"] = yaml_data["license"]
+    else:
+        dot_shed["type"] = "unrestricted"
         
     dot_shed["remote_repository_url"] = "https://github.com/GEO-BON/bon-in-a-box-pipelines/tree/main/scripts"
     dot_shed["categories"] = []
@@ -256,7 +258,6 @@ def add_tool_to_tool_conf(galaxy_path: Path, galaxy_wrapper_path: Path, galaxy_s
     if section.get('id') != "biab":
         section = ET.SubElement(toolbox, 'section', section_attrib)
     
-    # path of the galaxy script file including its parent directory
     path_of_galaxy_script = Path(galaxy_wrapper_path)
     file_attr = str(Path(*path_of_galaxy_script.parts[-2:]))
     
@@ -562,7 +563,7 @@ def main():
     parser.add_argument(
         "-g", "--galaxy",
         nargs='?',
-        const="guess galaxy path",
+        const=False,
         default=None,
         help="path to a galaxy instance. Use this to do the necessary changes to your instance to use the generated tools.\n\
         In addition to creating a script file and wrapper file it creates a .shed.yml file, add the tool to tool_conf.xml, generates the regions and countries data tables and add them tool_data_table_conf.xml\n\
@@ -592,7 +593,7 @@ def main():
             case ".r":
                 from . import r_converter as script_processor
             case ".jl":
-                from . import jl_converter as script_processor
+                from . import jl_converter as script_processor        
     
     if galaxy_wrapper_path is not None:
         if biab_wrapper_path is None:
@@ -612,13 +613,22 @@ def main():
     if galaxy_path is not None:
         if biab_wrapper_path is None or biab_script_path is None:
             raise Exception("to test your tool in a galaxy instance you need a wrapper and a script")
-        if galaxy_path == "guess galaxy path":
+        if galaxy_path == False:
             reference_path = Path(biab_wrapper_path)
-            print(f"guessing the path of the Galaxy instance is {reference_path.parent.parent.parent}")
+            galaxy_path = reference_path.parent.parent.parent
+            print(f"guessing the path of the Galaxy instance is {galaxy_path}")
+        else: #decides the path of the galaxy wrapper/script if the galaxy path is given but not the galaxy wrapper/script path
+            if galaxy_wrapper_path is None:
+                galaxy_wrapper_path = Path(galaxy_path) / "tools" / Path(biab_wrapper_path).parent.name / Path(biab_wrapper_path).name
+                generate_wrapper(script_processor, yaml_data, galaxy_wrapper_path, biab_script_path, galaxy_script_path)
+            if galaxy_script_path is None:
+                galaxy_script_path = Path(galaxy_path) / "tools" / Path(biab_script_path).parent.name / Path(biab_script_path).name
+                generate_script(script_processor, biab_script_path, galaxy_script_path, yaml_data)
         generate_data_tables(galaxy_path)
         add_tool_to_tool_conf(galaxy_path, galaxy_wrapper_path, galaxy_script_path)
         generate_dot_shed(Path(galaxy_script_path).parent.absolute() / ".shed.yml", yaml_data)        
     
+    # if no argument is given, display help
     if all(value is None for value in (args.biab_wrapper, args.biab_script, args.galaxy_wrapper, args.galaxy_script, args.shed, args.galaxy)):
         parser.print_help(sys.stderr)
         sys.exit(1)
