@@ -287,7 +287,7 @@ def _add_options(parent: ET.Element, options_list: iter) -> list[ET.Element]:
     options_list : iter
         list of values of options.
     """
-    for option_name in yaml_options:
+    for option_name in options_list:
         option = ET.SubElement(parent, 'option', {"value":option_name})
         option.text = option_name
         
