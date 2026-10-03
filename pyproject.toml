@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "biab2galaxy"
 version = "0.1.1"
 authors = [
-  { name="Jean Le Cras", email="jean.le-cras@proton.me" },
+  { name="Jean Le Cras"},
 ]
 description = "A tool to convert Bon in a Box tools into Galaxy tools"
 readme = "README.md"
